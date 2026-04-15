@@ -77,11 +77,18 @@ def _get_loop() -> asyncio.AbstractEventLoop:
         return _loop
 
 
-def _run_sync(coro, timeout: float = 120.0):
+def _run_sync(coro, timeout: float = 120.0, retries: int = 2):
     """Schedule *coro* on the shared loop and block until done."""
     loop = _get_loop()
-    future = asyncio.run_coroutine_threadsafe(coro, loop)
-    return future.result(timeout=timeout)
+    for attempt in range(retries):
+        try:
+            future = asyncio.run_coroutine_threadsafe(coro, loop)
+            return future.result(timeout=timeout)
+        except (asyncio.TimeoutError, TimeoutError, asyncio.CancelledError) as e:
+            if attempt == retries - 1:
+                raise
+            logger.debug("Hindsight call timed out (attempt %d/%d), retrying", attempt + 1, retries)
+            continue
 
 
 # ---------------------------------------------------------------------------

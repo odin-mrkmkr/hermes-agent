@@ -774,13 +774,11 @@ def build_skills_system_prompt(
 
         result = (
             "## Skills (mandatory)\n"
-            "Before replying, scan the skills below. If a skill matches or is even partially relevant "
-            "to your task, you MUST load it with skill_view(name) and follow its instructions. "
-            "Err on the side of loading — it is always better to have context you don't need "
-            "than to miss critical steps, pitfalls, or established workflows. "
-            "Skills contain specialized knowledge — API endpoints, tool-specific commands, "
-            "and proven workflows that outperform general-purpose approaches. Load the skill "
-            "even if you think you could handle the task with basic tools like web_search or terminal. "
+            "Before replying, scan the skills below. If a skill name or description "
+            "EXACTLY matches what you need to do, load it with skill_view(name) and follow its instructions. "
+            "Do NOT guess skill names — if you are unsure whether a skill exists for your task, "
+            "use skills_list first to search by keyword. "
+            "Loading a non-existent skill wastes a tool call. "
             "Skills also encode the user's preferred approach, conventions, and quality standards "
             "for tasks like code review, planning, and testing — load them even for tasks you "
             "already know how to do, because the skill defines how it should be done here.\n"
